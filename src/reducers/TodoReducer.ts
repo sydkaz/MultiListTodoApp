@@ -1,5 +1,6 @@
 // import Todos from "../Modals/Todos";
 
+import Todo from "../Modals/Todo";
 import Todos from "../Modals/Todos";
 import { User, updateUsers } from "../Modals/User";
 
@@ -9,6 +10,8 @@ export type StateType = {
     // todoLists: Todos[];
     // selectedList: Todos | any;
     currentForm?: string | any;
+    todo?: Todo | null;
+     
 }
 
 export enum Types {
@@ -16,7 +19,9 @@ export enum Types {
     CreateTodoList = 'CREATE_TODO_LIST',
     SelectList = 'SELECT_LIST',
     AddTodo = 'ADD_TODO',
-    SetForm = 'SET_FORM'
+    SetForm = 'SET_FORM',
+    ToggleTodo = 'TOGGLE_TODO',
+    DeleteTodo = 'DELETE_TODO',
 }
 
 type TodosPayload = {
@@ -31,6 +36,9 @@ export type CurrentFormPayload = {
     form: string;
 }
 
+export type TodoActionPayload = {
+    id: string;
+}
 
 export type CreateUserActionType = {
     readonly type: Types.SetCurrentUser,
@@ -57,8 +65,16 @@ export type SetFormActionType = {
     readonly payload: CurrentFormPayload
 }
 
+export type DeleteTodoActionType = {
+    readonly type: Types.DeleteTodo,
+    readonly payload: TodoActionPayload
+}
+export type ToogleTodoActionType = {
+    readonly type: Types.ToggleTodo,
+    readonly payload: TodoActionPayload
+}
 
-export const reducer = (state: StateType, action: SetFormActionType | CreateUserActionType | CreateTodoListActionType | SelectTodoListActionType | AddTodoActionType) => {
+export const reducer = (state: StateType, action: SetFormActionType | CreateUserActionType | CreateTodoListActionType | SelectTodoListActionType | AddTodoActionType | DeleteTodoActionType | ToogleTodoActionType) => {
     let newState;
     switch (action.type) {
         case Types.SetForm:
@@ -69,13 +85,13 @@ export const reducer = (state: StateType, action: SetFormActionType | CreateUser
             return newState;
 
         case Types.SetCurrentUser:
-            if(action.payload === null) {
+            if (action.payload === null) {
                 return {
                     ...state,
                     user: null,
                 }
             }
-            newState =  {
+            newState = {
                 ...state,
                 user: new User().fromJSON(action.payload),
             };
@@ -103,12 +119,26 @@ export const reducer = (state: StateType, action: SetFormActionType | CreateUser
             };
             updateUsers(newState.user);
             return newState;
-        
+
         case Types.AddTodo:
             state.user?.selectedList?.add(action.payload.text);
-             newState = {
+            newState = {
                 ...state
             }
+            updateUsers(newState.user);
+            return newState;
+        case Types.DeleteTodo:
+            state.user?.selectedList?.remove(action.payload);
+            newState = {
+                ...state
+            };
+            updateUsers(newState.user);
+            return newState;
+        case Types.ToggleTodo:
+            state.user?.selectedList?.toggle(action.payload);
+            newState = {
+                ...state
+            };
             updateUsers(newState.user);
             return newState;
         default:

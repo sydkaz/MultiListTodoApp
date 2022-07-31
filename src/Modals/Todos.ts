@@ -12,7 +12,12 @@ export default class Todos {
     }
 
     remove(todo: Todo): void {
-        this.list.filter((t: Todo) => t.id !== todo.id);
+        this.list = this.list.filter((t: Todo) => t.id !== todo.id);
+    }
+
+    toggle(todo: Todo): void {
+        debugger
+        this.list.find((t: Todo) => t.id === todo.id)?.toggle();
     }
 
 

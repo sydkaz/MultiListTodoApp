@@ -16,6 +16,7 @@ export const TodoContextProvider = (props: any) => {
     const initialSate: StateType = {
         user: null,
         currentForm: 'login',
+         
     }
 
     const [state, dispatch] = useReducer(reducer, initialSate);

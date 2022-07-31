@@ -11,6 +11,10 @@ export default class Todo {
         this.isComplete = true;
     }
 
+    toggle(): void {
+        this.isComplete = !this.isComplete;
+    }
+
     restart(): void {
         this.isComplete = false;
     }
